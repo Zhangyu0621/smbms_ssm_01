@@ -41,7 +41,7 @@ public class UserController {
     public String loginout(HttpSession session) {
         session.removeAttribute(Constants.USER_SESSION);
         //
-        System.out.println("----");
+        System.out.println("----测试");
         return "redirect:/user/login.html";
     }
 
