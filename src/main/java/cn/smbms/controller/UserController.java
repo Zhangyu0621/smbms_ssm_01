@@ -40,6 +40,8 @@ public class UserController {
     @RequestMapping("/loginout.html")
     public String loginout(HttpSession session) {
         session.removeAttribute(Constants.USER_SESSION);
+        //
+        System.out.println("----");
         return "redirect:/user/login.html";
     }
 
