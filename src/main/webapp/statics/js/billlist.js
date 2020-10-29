@@ -4,8 +4,8 @@ var billObj;
 function deleteBill(obj){
 	$.ajax({
 		type:"GET",
-		url:path+"/jsp/bill.do",
-		data:{method:"delbill",billid:obj.attr("billid")},
+		url:path+"/delbill",
+		data:{billid:obj.attr("billid")},
 		dataType:"json",
 		success:function(data){
 			if(data.delResult == "true"){//删除成功：移除删除行

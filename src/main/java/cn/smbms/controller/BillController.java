@@ -15,9 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Controller
 public class BillController {
@@ -146,6 +144,19 @@ public class BillController {
             return "redirect:/billlist.html";
         }
         return "billmodify";
+    }
+
+    @RequestMapping("/delbill")
+    @ResponseBody
+    public Map<String, String> delBill(String billid){
+        HashMap<String, String> resultMap = new HashMap<String, String>();
+
+            if(billService.deleteBillById(billid)){//删除成功
+                resultMap.put("delResult", "true");
+            }else{//删除失败
+                resultMap.put("delResult", "false");
+            }
+        return resultMap;
     }
 
 }

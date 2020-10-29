@@ -4,8 +4,8 @@ var providerObj;
 function deleteProvider(obj) {
     $.ajax({
         type: "GET",
-        url: path + "/jsp/provider.do",
-        data: {method: "delprovider", proid: obj.attr("proid")},
+        url: path + "/delProvider",
+        data: {proid: obj.attr("proid")},
         dataType: "json",
         success: function (data) {
             if (data.delResult == "true") {//删除成功：移除删除行
@@ -70,7 +70,7 @@ $(function () {
         openYesOrNoDLG();
     });
 
-    $(".deleteProvider").on("click", function () {
+   /* $(".deleteProvider").on("click", function () {
         var obj = $(this);
         if (confirm("你确定要删除供应商【" + obj.attr("proname") + "】吗？")) {
             $.ajax({
@@ -95,5 +95,5 @@ $(function () {
                 }
             });
         }
-    });
+    });*/
 });

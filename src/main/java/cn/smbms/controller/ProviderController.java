@@ -11,12 +11,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Controller
 //@RequestMapping("/provider")
@@ -106,6 +106,28 @@ public class ProviderController {
         return "providerview";
     }
 
-
+    /**
+     * 删除 供应商信息
+     * @param proid
+     * @return
+     */
+    @RequestMapping("/delProvider")
+    @ResponseBody
+    public Map<String, String> delProvider(String proid){
+        HashMap<String, String> resultMap = new HashMap<String, String>();
+        if(!StringUtils.isNullOrEmpty(proid)){
+            int flag = providerService.deleteProviderById(proid);
+            if(flag == 0){//删除成功
+                resultMap.put("delResult", "true");
+            }else if(flag == -1){//删除失败
+                resultMap.put("delResult", "false");
+            }else if(flag > 0){//该供应商下有订单，不能删除，返回订单数
+                resultMap.put("delResult", String.valueOf(flag));
+            }
+        }else{
+            resultMap.put("delResult", "notexit");
+        }
+        return resultMap;
+    }
 
 }
