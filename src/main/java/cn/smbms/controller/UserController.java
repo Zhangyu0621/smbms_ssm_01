@@ -9,6 +9,7 @@ import cn.smbms.service.user.UserServiceImpl;
 import cn.smbms.tools.Constants;
 import cn.smbms.tools.PageSupport;
 import com.alibaba.fastjson.JSONArray;
+import com.mysql.jdbc.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.File;
+import java.io.PrintWriter;
 import java.util.*;
 
 @Controller
@@ -71,11 +73,12 @@ public class UserController {
         if (user != null) {
             session.setAttribute(Constants.USER_SESSION, user);
             return "redirect:/user/frame.html";
-} else {
-        request.setAttribute("error", "用户名或密码错误!");
-        return "login";
+        } else {
+            request.setAttribute("error", "用户名或密码错误!");
+            return "login";
         }
-        }
+    }
+
     @RequestMapping("/userlist.html")
 
     public String main(Model model, String queryname, @RequestParam(value = "queryUserRole", defaultValue = "0") Integer userRole,
@@ -426,17 +429,76 @@ public class UserController {
         return "pwdmodify";
     }
 
-   /* @RequestMapping("/getPwdByUserId")
+    @RequestMapping("/updatePwd")
     @ResponseBody
-    public String getPwdByUserId(){
-        return userService.getUserById(idz);
-    }*/
+    public Map updatePwd(String oldpassword, HttpServletRequest request) {
+        User user = (User) request.getSession().getAttribute(Constants.USER_SESSION);
+        Map<String, String> resultMap = new HashMap<String, String>();
 
-    @RequestMapping("/pwdsave.html")
-    public String pwdSave() {
+        if (null == user) {//session过期
+            resultMap.put("result", "sessionerror");
+        } else if (StringUtils.isNullOrEmpty(oldpassword)) {//旧密码输入为空
+            resultMap.put("result", "error");
+        } else {
+            if (oldpassword.equals(user.getUserPassword())) {
+                resultMap.put("result", "true");
+            } else {//旧密码输入不正确
+                resultMap.put("result", "false");
+            }
+        }
+        return resultMap;
+    }
 
-
+    /**
+     * 密码 保存
+     * @param newpassword
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "/pwdsave.html",method = RequestMethod.POST)
+    public String savePwd(String newpassword,HttpServletRequest request){
+        User user = (User) request.getSession().getAttribute(Constants.USER_SESSION);
+        boolean flag = false;
+        if(user != null && !StringUtils.isNullOrEmpty(newpassword)){
+            flag = userService.updatePwd(user.getId(),newpassword);
+            if(flag){
+                request.setAttribute(Constants.SYS_MESSAGE, "修改密码成功,请退出并使用新密码重新登录！");
+                request.getSession().removeAttribute(Constants.USER_SESSION);//session注销
+                return "redirect:/user/login.html";
+            }else{
+                request.setAttribute(Constants.SYS_MESSAGE, "修改密码失败！");
+            }
+        }else{
+            request.setAttribute(Constants.SYS_MESSAGE, "修改密码失败！");
+        }
         return "pwdmodify";
+    }
+
+    /**
+     * 删除用户
+     *
+     * @return
+     */
+    @RequestMapping("/userdel")
+    @ResponseBody
+    public Map<String, String> delUser(String uid) {
+        Integer delId = 0;
+        try {
+            delId = Integer.parseInt(uid);
+        } catch (Exception e) {
+            delId = 0;
+        }
+        HashMap<String, String> resultMap = new HashMap<String, String>();
+        if (delId <= 0) {
+            resultMap.put("delResult", "notexist");
+        } else {
+            if (userService.deleteUserById(delId)) {
+                resultMap.put("delResult", "true");
+            } else {
+                resultMap.put("delResult", "false");
+            }
+        }
+        return resultMap;
     }
 
 }

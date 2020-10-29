@@ -4,8 +4,8 @@ var userObj;
 function deleteUser(obj) {
     $.ajax({
         type: "GET",
-        url: path + "/jsp/user.do",
-        //data:{method:"deluser",uid:obj.attr("userid")},
+        url: path + "/user/userdel",
+        data:{uid:obj.attr("userid")},
         dataType: "json",
         success: function (data) {
             if (data.delResult == "true") {//删除成功：移除删除行
@@ -90,7 +90,7 @@ $(function () {
         if(confirm("你确定要删除用户【"+obj.attr("username")+"】吗？")){
             $.ajax({
                 type:"GET",
-                url:path+"/jsp/user.do",
+                url:path+"/user/userdel",
                 data:{method:"deluser",uid:obj.attr("userid")},
                 dataType:"json",
                 success:function(data){

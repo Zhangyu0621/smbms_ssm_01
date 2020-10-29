@@ -7,7 +7,7 @@
                 <span>密码修改页面</span>
             </div>
             <div class="providerAdd">
-                <form id="userForm" name="userForm" method="post" action="${pageContext.request.contextPath }/jsp/user.do">
+                <form id="userForm" name="userForm" method="post" action="/user/pwdsave.html">
                     <input type="hidden" name="method" value="savepwd">
                     <!--div的class 为error是验证错误，ok是验证成功-->
                     <div class="info">${message}</div>
@@ -22,7 +22,7 @@
 						<font color="red"></font>
                     </div>
                     <div>
-                        <label for="reNewPassword">确认新密码：</label>
+                        <label for="rnewpassword">确认新密码：</label>
                         <input type="password" name="rnewpassword" id="rnewpassword" value=""> 
 						<font color="red"></font>
                     </div>
